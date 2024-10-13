@@ -9,9 +9,11 @@ using SampleApp.Extensibility;
 
 namespace SampleApp.Models;
 
-public class ExtensionModel : DependencyObject
+public partial class ExtensionModel : DependencyObject, IDisposable
 {
 	public readonly string ExtensionPath;
+
+	public IExtensionAssembly? ExtensionAssembly { get; private set; }
 
 	public IExtension? Instance { get; private set; }
 
@@ -57,22 +59,20 @@ public class ExtensionModel : DependencyObject
 		}
 	}
 
-	IExtension? LoadMyExtensionAndCreateInstance(string assemblyLoadPath, bool loadXamlResources)
+	IExtension? LoadMyExtensionAndCreateInstance(string assemblyLoadPath, bool loadXamlResources, bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
 	{
 		// save off the handle so we can clean up our registration with the hosting process later if desired.
-		// LoadExtension will only load extension assembly to the host process.
-		// LoadExtensionAndPriResources will load extension assembly and `Core.ResourceMap` pri resources to the host process.
-		IExtensionAssembly extensionAssembly = ApplicationExtensionHost.Current.LoadExtension(assemblyLoadPath);
+		ExtensionAssembly = ApplicationExtensionHost.Current.LoadExtension(assemblyLoadPath, loadPriResourcesIntoWinResourceMap, loadPriResourcesIntoCoreResourceMap);
 
 		// load xaml files when the extension is loading
 		if (loadXamlResources)
 		{
 			// resourceFolder is the symbolic path to the resource folder in the host project directory.
-			string? resourceFolder = extensionAssembly.TryLoadXamlResources();
+			string? resourceFolder = ExtensionAssembly.TryLoadXamlResources();
 		}
 
 		// get the actual assembly object
-		Assembly assembly = extensionAssembly.ForeignAssembly;
+		Assembly assembly = ExtensionAssembly.ForeignAssembly;
 
 		// get the type of the extension
 		Type? type = ApplicationExtensionHost.Current.FromAssemblyGetTypeOfInterface(assembly, typeof(IExtension));
@@ -81,5 +81,27 @@ public class ExtensionModel : DependencyObject
 		IExtension? extension = Activator.CreateInstance(type) as IExtension;
 
 		return extension;
+	}
+
+	private bool isDisposed;
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!isDisposed)
+		{
+			if (disposing)
+			{
+				ExtensionAssembly?.Dispose();
+			}
+
+			isDisposed = true;
+		}
+	}
+
+	public void Dispose()
+	{
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
 	}
 }

@@ -6,7 +6,7 @@ namespace SampleApp;
 
 public partial class App : Application
 {
-	private static Window MainWindow { get; set; } = null!;
+	public static Window MainWindow { get; set; } = null!;
 
 	public App()
 	{

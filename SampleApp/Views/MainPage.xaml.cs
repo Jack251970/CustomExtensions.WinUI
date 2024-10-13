@@ -16,6 +16,14 @@ public sealed partial class MainPage : Page
 		InitializeComponent();
 	}
 
+	private void MainWindow_Closed(object sender, WindowEventArgs args)
+	{
+		foreach (var item in MenuItems)
+		{
+			item.Dispose();
+		}
+	}
+
 	private void Page_Loaded(object sender, RoutedEventArgs e)
 	{
 #if DEBUG
@@ -27,6 +35,8 @@ public sealed partial class MainPage : Page
 		{
 			MenuItems.Add(new(fileInfo.FullName));
 		}
+
+		App.MainWindow.Closed += MainWindow_Closed;
 	}
 
 	private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
