@@ -1,6 +1,6 @@
 using Microsoft.UI.Xaml;
 using SampleApp.Extensibility;
-using SampleExtension.UI;
+using SampleExtension.Views;
 
 namespace SampleExtension;
 

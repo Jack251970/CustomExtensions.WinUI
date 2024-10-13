@@ -2,8 +2,9 @@ using CustomExtensions.WinUI.Extensions;
 using CustomExtensions.WinUI.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SampleExtension.Models;
 
-namespace SampleExtension.UI;
+namespace SampleExtension.Views;
 
 public sealed partial class Greeter : UserControl
 {

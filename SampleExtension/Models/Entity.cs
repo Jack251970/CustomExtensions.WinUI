@@ -1,4 +1,4 @@
-﻿namespace SampleExtension.UI;
+﻿namespace SampleExtension.Models;
 
 public enum GreetEntity
 {

@@ -1,8 +1,9 @@
 using CustomExtensions.WinUI.Extensions;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SampleExtension.Models;
 
-namespace SampleExtension.UI;
+namespace SampleExtension.Views;
 
 public sealed partial class SamplePage : Page
 {

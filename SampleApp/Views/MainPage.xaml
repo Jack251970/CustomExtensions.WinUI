@@ -12,6 +12,7 @@
 
     <NavigationView
         x:Name="Nav"
+        IsSettingsVisible="False"
         MenuItemsSource="{x:Bind MenuItems, Mode=OneWay}"
         PaneDisplayMode="Left"
         SelectionChanged="NavigationView_SelectionChanged">

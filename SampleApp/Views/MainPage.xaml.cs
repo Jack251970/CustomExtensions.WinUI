@@ -18,7 +18,11 @@ public sealed partial class MainPage : Page
 
 	private void Page_Loaded(object sender, RoutedEventArgs e)
 	{
-		string searchDir = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..\SampleExtension\bin\Debug\net6.0-windows10.0.19041.0");
+#if DEBUG
+		string searchDir = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..\SampleExtension\bin\Debug\net6.0-windows10.0.22621.0");
+#else
+		string searchDir = Path.Combine(AppContext.BaseDirectory, @"..\..\..\..\..\SampleExtension\bin\Release\net6.0-windows10.0.22621.0");
+#endif
 		foreach (FileInfo fileInfo in new DirectoryInfo(searchDir).EnumerateFiles("*.SampleAppExtension.dll", new EnumerationOptions() { RecurseSubdirectories = true }))
 		{
 			MenuItems.Add(new(fileInfo.FullName));

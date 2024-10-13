@@ -1,21 +1,22 @@
 ﻿<Page
-    x:Class="SampleExtension.UI.SamplePage"
+    x:Class="SampleExtension.Views.SamplePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:SampleExtension.UI"
+    xmlns:local="using:SampleExtension.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:SampleExtension.Models"
     xmlns:ui="using:CommunityToolkit.WinUI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
     <StackPanel Spacing="10">
         <local:Greeter TargetEntity="{Binding SelectedItem, ElementName=Entity, Mode=OneWay}" />
-        <ComboBox x:Name="Entity" ItemsSource="{ui:EnumValues Type=local:GreetEntity}" />
+        <ComboBox x:Name="Entity" ItemsSource="{ui:EnumValues Type=models:GreetEntity}" />
         <controls:SwitchPresenter
             x:Name="SwitchPresenter"
             Padding="16"
-            TargetType="local:GreetEntity"
+            TargetType="models:GreetEntity"
             Value="{Binding SelectedItem, ElementName=Entity, Mode=OneWay}">
             <controls:Case Value="World">
                 <TextBlock FontSize="32" Text="🌍" />
