@@ -6,15 +6,6 @@ namespace SampleExtension.UI;
 
 public sealed partial class SamplePage : Page
 {
-	public SamplePage()
-	{
-		// Method 1: Load the Xaml files when the extension is loading.
-		InitializeComponent();
-
-		// Method 2: Load the Xaml files every time when they are needed.
-		this.LoadComponent(ref _contentLoaded);
-	}
-
 	public GreetEntity InitialSelectedEntity
 	{
 		get { return (GreetEntity)GetValue(SelectedEntityProperty); }
@@ -24,4 +15,13 @@ public sealed partial class SamplePage : Page
 	// Using a DependencyProperty as the backing store for InitialSelectedEntity.  This enables animation, styling, binding, etc...
 	public static readonly DependencyProperty SelectedEntityProperty =
 		DependencyProperty.Register(nameof(InitialSelectedEntity), typeof(GreetEntity), typeof(SamplePage), new PropertyMetadata(GreetEntity.World));
+
+	public SamplePage()
+	{
+		// Method 1: Load the Xaml files when the extension is loading.
+		InitializeComponent();
+
+		// Method 2: Load the Xaml files every time when they are needed.
+		this.LoadComponent(ref _contentLoaded);
+	}
 }

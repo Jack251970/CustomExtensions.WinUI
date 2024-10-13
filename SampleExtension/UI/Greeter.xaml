@@ -2,7 +2,7 @@
     x:Class="SampleExtension.UI.Greeter"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:local="using:SampleExtension.UI"
     x:Name="Self"
     Loaded="Self_Loaded">

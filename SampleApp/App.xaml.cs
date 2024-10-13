@@ -6,6 +6,8 @@ namespace SampleApp;
 
 public partial class App : Application
 {
+	private static Window MainWindow { get; set; } = null!;
+
 	public App()
 	{
 		InitializeComponent();
@@ -13,8 +15,6 @@ public partial class App : Application
 		// Initialize the application extension host
 		ApplicationExtensionHost.Initialize(this);
 	}
-
-	private static Window MainWindow { get; set; } = null!;
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
