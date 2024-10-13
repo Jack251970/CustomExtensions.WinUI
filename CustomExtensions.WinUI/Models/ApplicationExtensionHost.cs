@@ -10,7 +10,13 @@ public static partial class ApplicationExtensionHost
     private static IApplicationExtensionHost? _Current;
     public static IApplicationExtensionHost Current => _Current ?? throw new InvalidOperationException("ApplicationExtensionHost is not initialized");
 
-    public static void Initialize<TApplication>(TApplication application) where TApplication : Application
+	/// <summary>
+	/// Initializes the application extension host with the specified application.
+	/// </summary>
+	/// <typeparam name="TApplication">The type of the application.</typeparam>
+	/// <param name="application">The application to initialize the application extension host with.</param>
+	/// <exception cref="InvalidOperationException">Cannot initialize application twice.</exception>
+	public static void Initialize<TApplication>(TApplication application) where TApplication : Application
     {
         if (_Current != null)
         {
@@ -29,15 +35,22 @@ public static partial class ApplicationExtensionHost
     {
         assembly ??= Assembly.GetCallingAssembly();
         var assemblyName = assembly.GetName().Name;
-        var assemblyPath = assembly.Location;
-        var assemblyDirectory = Path.GetDirectoryName(assemblyPath);
         if (assemblyName == null)
         {
             return null;
         }
 
-        return new Microsoft.Windows.ApplicationModel.Resources.ResourceManager($"{assemblyDirectory}\\{assemblyName}.pri").MainResourceMap.TryGetSubtree($"{assemblyName}/Resources");
-    }
+		var find = ResourceExtensions.WinResourceMaps.TryGetValue(assemblyName, out var map);
+		if (find)
+		{
+			return map!.GetSubtree($"{assemblyName}/Resources");
+		}
+		else
+		{
+			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(assembly);
+			return GetWinResourceMapForAssembly(assembly);
+		}
+	}
 
 	/// <summary>
 	/// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
@@ -60,7 +73,7 @@ public static partial class ApplicationExtensionHost
 		}
 		else
 		{
-			ExtensionAssembly.LoadPriResources(assembly);
+			ResourceExtensions.LoadPriResourcesIntoCoreResourceMap(assembly);
 			return GetCoreResourceMapForAssembly(assembly);
 		}
 	}
@@ -86,7 +99,7 @@ public static partial class ApplicationExtensionHost
 		}
 		else
 		{
-			await ExtensionAssembly.LoadPriResourcesAsync(assembly);
+			await ResourceExtensions.LoadPriResourcesIntoCoreResourceMapAsync(assembly);
 			return await GetCoreResourceMapForAssemblyAsync(assembly);
 		}
 	}

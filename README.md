@@ -26,12 +26,10 @@ Then you can get the actual assembly object and create an instance of your exten
 ```cs
 using CustomExtensions.WinUI.Contracts;
 
-IExtension? LoadMyExtensionAndCreateInstance(string assemblyLoadPath, bool loadXamlResources)
+IExtension? LoadMyExtensionAndCreateInstance(string assemblyLoadPath, bool loadXamlResources, bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
 {
     // save off the handle so we can clean up our registration with the hosting process later if desired.
-    // LoadExtension will only load extension assembly to the host process.
-    // LoadExtensionAndPriResources will load extension assembly and `Core.ResourceMap` pri resources to the host process.
-    IExtensionAssembly extensionAssembly = ApplicationExtensionHost.Current.LoadExtension(assemblyLoadPath);
+    IExtensionAssembly extensionAssembly = ApplicationExtensionHost.Current.LoadExtension(assemblyLoadPath, loadPriResourcesIntoWinResourceMap, loadPriResourcesIntoCoreResourceMap);
 
     // load xaml files when the extension is loading
     if (loadXamlResources)

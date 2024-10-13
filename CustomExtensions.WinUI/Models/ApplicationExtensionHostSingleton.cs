@@ -21,31 +21,17 @@ internal partial class ApplicationExtensionHostSingleton<T> : IApplicationExtens
 		HostingProcessDir = Path.GetDirectoryName(EntryAssembly.AssertDefined().Location).AssertDefined();
 	}
 
-    public IExtensionAssembly LoadExtension(string pathToAssembly)
+    public IExtensionAssembly LoadExtension(string pathToAssembly, bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
     {
         var asm = GetExtensionAssembly(pathToAssembly);
-        asm.LoadResources(false);
+        asm.LoadResources(loadPriResourcesIntoWinResourceMap, loadPriResourcesIntoCoreResourceMap);
         return asm;
     }
 
-	public IExtensionAssembly LoadExtensionAndPriResources(string pathToAssembly)
+	public async Task<IExtensionAssembly> LoadExtensionAsync(string pathToAssembly, bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
 	{
 		var asm = GetExtensionAssembly(pathToAssembly);
-		asm.LoadResources(true);
-		return asm;
-	}
-
-	public async Task<IExtensionAssembly> LoadExtensionAsync(string pathToAssembly)
-	{
-		var asm = GetExtensionAssembly(pathToAssembly);
-		await asm.LoadResourcesAsync(false);
-		return asm;
-	}
-
-	public async Task<IExtensionAssembly> LoadExtensionAndPriResourcesAsync(string pathToAssembly)
-	{
-		var asm = GetExtensionAssembly(pathToAssembly);
-		await asm.LoadResourcesAsync(true);
+		await asm.LoadResourcesAsync(loadPriResourcesIntoWinResourceMap, loadPriResourcesIntoCoreResourceMap);
 		return asm;
 	}
 

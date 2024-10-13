@@ -1,6 +1,6 @@
 ﻿namespace CustomExtensions.WinUI.Models;
 
-public class DisposableCollection : HashSet<IDisposable>, IDisposable
+internal class DisposableCollection : HashSet<IDisposable>, IDisposable
 {
     private bool IsDisposed;
 

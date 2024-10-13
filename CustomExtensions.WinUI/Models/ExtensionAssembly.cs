@@ -20,17 +20,12 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 		// such as unable to find secondarily-referred WinUI components.
 		// Even if using AssemblyLoadContext.Default which should have no difference thanAssembly.LoadFrom(), but it does.
 		// So, our packaged uses Assembly.LoadFrom() instead.
-		//
-		// ExtensionContext = new(assemblyPath);
-		// ForeignAssembly = ExtensionContext.LoadFromAssemblyPath(assemblyPath);
-		// So use Assembly.LoadFrom() instead.
-
 		ForeignAssembly = Assembly.LoadFrom(assemblyPath);
 		ForeignAssemblyDir = Path.GetDirectoryName(ForeignAssembly.Location.AssertDefined()).AssertDefined();
 		ForeignAssemblyName = ForeignAssembly.GetName().Name.AssertDefined();
 	}
 
-    public void LoadResources(bool loadPriResources)
+    public void LoadResources(bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
     {
 		if (IsDisposed)
 		{
@@ -39,13 +34,18 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 
 		RegisterXamlTypeMetadataProviders();
 
-		if (loadPriResources)
+		if (loadPriResourcesIntoWinResourceMap)
 		{
-			LoadPriResources();
+			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
+		}
+
+		if (loadPriResourcesIntoCoreResourceMap)
+		{
+			ResourceExtensions.LoadPriResourcesIntoCoreResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
 		}
     }
 
-	public async Task LoadResourcesAsync(bool loadPriResources)
+	public async Task LoadResourcesAsync(bool loadPriResourcesIntoWinResourceMap = false, bool loadPriResourcesIntoCoreResourceMap = false)
 	{
 		if (IsDisposed)
 		{
@@ -54,49 +54,14 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 
 		RegisterXamlTypeMetadataProviders();
 
-		if (loadPriResources)
+		if (loadPriResourcesIntoWinResourceMap)
 		{
-			await LoadPriResourcesAsync();
+			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
 		}
-	}
 
-	public static void LoadPriResources(Assembly ForeignAssembly)
-	{
-		var foreignAssemblyDir = Path.GetDirectoryName(ForeignAssembly.Location.AssertDefined()).AssertDefined();
-		var foreignAssemblyName = ForeignAssembly.GetName().Name.AssertDefined();
-
-		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
+		if (loadPriResourcesIntoCoreResourceMap)
 		{
-			LoadPriResources(resourcePriPath);
-		}
-		else
-		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				LoadPriResources(resourcePriPath);
-			}
-		}
-	}
-
-	public static async Task LoadPriResourcesAsync(Assembly ForeignAssembly)
-	{
-		var foreignAssemblyDir = Path.GetDirectoryName(ForeignAssembly.Location.AssertDefined()).AssertDefined();
-		var foreignAssemblyName = ForeignAssembly.GetName().Name.AssertDefined();
-
-		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
-		{
-			await LoadPriResourcesAsync(resourcePriPath);
-		}
-		else
-		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				await LoadPriResourcesAsync(resourcePriPath);
-			}
+			await ResourceExtensions.LoadPriResourcesIntoCoreResourceMapAsync(ForeignAssemblyDir, ForeignAssemblyName);
 		}
 	}
 
@@ -111,56 +76,6 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 			.Where(type => type.IsAssignableTo(typeof(IXamlMetadataProvider)))
 			.Select(metadataType => (Activator.CreateInstance(metadataType) as IXamlMetadataProvider).AssertDefined())
 			.Select(ApplicationExtensionHost.Current.RegisterXamlTypeMetadataProvider));
-	}
-
-	private void LoadPriResources()
-	{
-		var resourcePriPath = Path.Combine(ForeignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
-		{
-			LoadPriResources(resourcePriPath);
-		}
-		else
-		{
-			resourcePriPath = Path.Combine(ForeignAssemblyDir, $"{ForeignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				LoadPriResources(resourcePriPath);
-			}
-		}
-	}
-
-	private async Task LoadPriResourcesAsync()
-	{
-		var resourcePriPath = Path.Combine(ForeignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
-		{
-			await LoadPriResourcesAsync(resourcePriPath);
-		}
-		else
-		{
-			resourcePriPath = Path.Combine(ForeignAssemblyDir, $"{ForeignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				await LoadPriResourcesAsync(resourcePriPath);
-			}
-		}
-	}
-
-	private static void LoadPriResources(string resourcePriPath)
-	{
-		FileInfo resourcePriFileInfo = new(resourcePriPath);
-		var getFileTask = Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName).AsTask();
-		getFileTask.Wait();
-		var file = getFileTask.Result;
-		Windows.ApplicationModel.Resources.Core.ResourceManager.Current.LoadPriFiles(new[] { file });
-	}
-
-	private static async Task LoadPriResourcesAsync(string resourcePriPath)
-	{
-		FileInfo resourcePriFileInfo = new(resourcePriPath);
-		var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName);
-		Windows.ApplicationModel.Resources.Core.ResourceManager.Current.LoadPriFiles(new[] { file });
 	}
 
     public bool TryEnableHotReload()
@@ -227,8 +142,9 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 		{
 			if (disposing)
 			{
+				ResourceExtensions.UnloadPriResourcesFromWinResourceMap(ForeignAssemblyName);
+				ResourceExtensions.UnloadPriResourcesFromCoreResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
 				Disposables?.Dispose();
-				// ExtensionContext?.Unload();
 			}
 
 			IsDisposed = true;
