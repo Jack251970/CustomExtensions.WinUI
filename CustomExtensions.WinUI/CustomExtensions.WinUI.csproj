@@ -10,15 +10,38 @@
     <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
     <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Package Settings -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Jack251970</Authors>
+    <Company>Jack251970</Company>
+    <PackageId>Jack251970.CustomExtensions.WinUI</PackageId>
+    <Product>WinUI CustomExtensions</Product>
+    <Description>This package provides the ability to load assemblies which may contain WinUI components and allow them to correctly render in the hosting process.</Description>
+    <Copyright>Copyright © 2024 - Jack251970</Copyright>
+    <PackageProjectUrl>https://github.com/Jack251970/CustomExtensions.WinUI</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Jack251970/CustomExtensions.WinUI</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>WinUI</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <!-- Other Settings -->
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <!-- Package Settings -->
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
