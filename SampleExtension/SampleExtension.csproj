@@ -1,20 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
 	<PropertyGroup>
+    <!-- General Properties -->
+    <RootNamespace>SampleExtension</RootNamespace>
+    <!-- Assembly Info Properties -->
+    <AssemblyName>SampleExtension.SampleAppExtension</AssemblyName>
+    <!-- Target Settings -->
 		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>SampleExtension</RootNamespace>
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- WinUI Properties -->
 		<UseWinUI>true</UseWinUI>
-		<AssemblyName>SampleExtension.SampleAppExtension</AssemblyName>
-
+    <!-- Package Properties -->
 		<IsPackable>false</IsPackable>
-		<UseWinUI>true</UseWinUI>
 		<WindowsPackageType>None</WindowsPackageType>
+    <!-- Other Settings -->
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<WindowsAppSdkBootstrapInitialize>false</WindowsAppSdkBootstrapInitialize>
-		<!-- https://github.com/dotnet/maui/issues/5886#issuecomment-1123106200 -->
-		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+    <EnableMsixTooling>true</EnableMsixTooling>
 	</PropertyGroup>
+  
 	<ItemGroup>
 		<None Remove="SamplePage.xaml" />
 		<None Remove="UI\Greeter.xaml" />
@@ -22,10 +30,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.221209.1">
-			<ExcludeAssets>runtime</ExcludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.240923002">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -54,6 +62,7 @@
 	<ItemGroup>
 		<PRIResource Remove="Strings\en-US\Resources.resw" />
 	</ItemGroup>
+  
 	<ItemGroup>
 		<None Update="AppxManifest.xml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -62,4 +71,9 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+  
+	<ItemGroup>
+	  <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.143" />
+	</ItemGroup>
+  
 </Project>

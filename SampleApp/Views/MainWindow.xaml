@@ -1,13 +1,13 @@
 <wex:WindowEx
-    x:Class="SampleApp.MainWindow"
+    x:Class="SampleApp.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:SampleApp"
-    xmlns:wex="using:WinUIEx"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:SampleApp.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-	Width="950"
-	Height="550">
-	<local:MainPage />
+    xmlns:wex="using:WinUIEx"
+    Width="960"
+    Height="570"
+    mc:Ignorable="d">
+    <local:MainPage />
 </wex:WindowEx>

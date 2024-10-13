@@ -19,7 +19,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ECD0FAFA-3ED3-49D4-BF18-E2992AD1E9C8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		BREAKING.md = BREAKING.md
+		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
 		.github\workflows\nuget-publish.yml = .github\workflows\nuget-publish.yml
+		README.md = README.md
+		version.json = version.json
 	EndProjectSection
 EndProject
 Global

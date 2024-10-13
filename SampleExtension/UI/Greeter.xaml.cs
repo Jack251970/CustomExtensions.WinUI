@@ -1,13 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
-using CustomExtensions.WinUI;
+using CustomExtensions.WinUI.Extensions;
+using CustomExtensions.WinUI.Models;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.ApplicationModel.Resources.Core;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SampleExtension.UI;
 
@@ -15,7 +9,10 @@ public sealed partial class Greeter : UserControl
 {
 	public Greeter()
 	{
-		// this.InitializeComponent();
+		// Method 1: Load the Xaml files when the extension is loading.
+		InitializeComponent();
+
+		// Method 2: Load the Xaml files every time when they are needed.
 		this.LoadComponent(ref _contentLoaded);
 	}
 
@@ -29,10 +26,14 @@ public sealed partial class Greeter : UserControl
 	public static readonly DependencyProperty TargetEntityProperty =
 		DependencyProperty.Register(nameof(TargetEntity), typeof(GreetEntity), typeof(Greeter), new PropertyMetadata(GreetEntity.World));
 
-
 	private void Self_Loaded(object sender, RoutedEventArgs e)
 	{
-		ResourceMap resources = ApplicationExtensionHost.GetResourceMapForAssembly();
-		Greeting.Text = resources.GetValue("Greeting/Text").ValueAsString;
+		// Method 1: Use `Windows.ApplicationModel.Resources.ResourceLoader` to load pri resources
+		Microsoft.Windows.ApplicationModel.Resources.ResourceMap winResources = ApplicationExtensionHost.GetWinResourceMapForAssembly();
+		Greeting.Text = winResources.GetValue("Greeting/Text").ValueAsString;
+
+		// Method 2: Use `Windows.ApplicationModel.Resources.Core.ResourceMap` to load pri resources
+		Windows.ApplicationModel.Resources.Core.ResourceMap coreResources = ApplicationExtensionHost.GetCoreResourceMapForAssembly();
+		Greeting.Text = coreResources.GetValue("Greeting/Text").ValueAsString;
 	}
 }
