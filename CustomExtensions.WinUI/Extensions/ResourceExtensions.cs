@@ -24,19 +24,26 @@ internal static class ResourceExtensions
 
 	public static void LoadPriResourcesIntoWinResourceMap(string foreignAssemblyDir, string foreignAssemblyName)
 	{
+		if (WinResourceMaps.ContainsKey(foreignAssemblyName))
+		{
+			return;
+		}
+
 		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
 		if (File.Exists(resourcePriPath))
 		{
 			WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath).MainResourceMap);
+			return;
 		}
-		else
+
+		resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
+		if (File.Exists(resourcePriPath))
 		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath).MainResourceMap);
-			}
+			WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath).MainResourceMap);
+			return;
 		}
+
+		WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager().MainResourceMap);
 	}
 
 	#endregion
@@ -60,6 +67,12 @@ internal static class ResourceExtensions
 
 	#region Core Resources
 
+	#region Management
+
+	internal static ConcurrentDictionary<string, string> CoreResources = new();
+
+	#endregion
+
 	#region Load
 
 	public static void LoadPriResourcesIntoCoreResourceMap(Assembly ForeignAssembly)
@@ -78,18 +91,25 @@ internal static class ResourceExtensions
 
 	public static void LoadPriResourcesIntoCoreResourceMap(string foreignAssemblyDir, string foreignAssemblyName)
 	{
+		if (CoreResources.ContainsKey(foreignAssemblyName))
+		{
+			return;
+		}
+
 		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
 		if (File.Exists(resourcePriPath))
 		{
 			LoadPriResourcesIntoCoreResourceMap(resourcePriPath);
+			CoreResources.TryAdd(foreignAssemblyName, resourcePriPath);
+			return;
 		}
-		else
+
+		resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
+		if (File.Exists(resourcePriPath))
 		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				LoadPriResourcesIntoCoreResourceMap(resourcePriPath);
-			}
+			LoadPriResourcesIntoCoreResourceMap(resourcePriPath);
+			CoreResources.TryAdd(foreignAssemblyName, resourcePriPath);
+			return;
 		}
 	}
 
@@ -99,18 +119,20 @@ internal static class ResourceExtensions
 		if (File.Exists(resourcePriPath))
 		{
 			await LoadPriResourcesIntoCoreResourceMapAsync(resourcePriPath);
+			CoreResources.TryAdd(foreignAssemblyName, resourcePriPath);
+			return;
 		}
-		else
+
+		resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
+		if (File.Exists(resourcePriPath))
 		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				await LoadPriResourcesIntoCoreResourceMapAsync(resourcePriPath);
-			}
+			await LoadPriResourcesIntoCoreResourceMapAsync(resourcePriPath);
+			CoreResources.TryAdd(foreignAssemblyName, resourcePriPath);
+			return;
 		}
 	}
 
-	public static void LoadPriResourcesIntoCoreResourceMap(string resourcePriPath)
+	private static void LoadPriResourcesIntoCoreResourceMap(string resourcePriPath)
 	{
 		FileInfo resourcePriFileInfo = new(resourcePriPath);
 		var getFileTask = Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName).AsTask();
@@ -119,7 +141,7 @@ internal static class ResourceExtensions
 		Windows.ApplicationModel.Resources.Core.ResourceManager.Current.LoadPriFiles(new[] { file });
 	}
 
-	public static async Task LoadPriResourcesIntoCoreResourceMapAsync(string resourcePriPath)
+	private static async Task LoadPriResourcesIntoCoreResourceMapAsync(string resourcePriPath)
 	{
 		FileInfo resourcePriFileInfo = new(resourcePriPath);
 		var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName);
@@ -146,39 +168,23 @@ internal static class ResourceExtensions
 
 	public static void UnloadPriResourcesFromCoreResourceMap(string foreignAssemblyDir, string foreignAssemblyName)
 	{
-		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
+		CoreResources.TryRemove(foreignAssemblyName, out var resourcePriPath);
+		if (resourcePriPath != null)
 		{
 			UnloadPriResourcesFromCoreResourceMap(resourcePriPath);
-		}
-		else
-		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				UnloadPriResourcesFromCoreResourceMap(resourcePriPath);
-			}
 		}
 	}
 
 	public static async Task UnloadPriResourcesFromCoreResourceMapAsync(string foreignAssemblyDir, string foreignAssemblyName)
 	{
-		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
-		if (File.Exists(resourcePriPath))
+		CoreResources.TryRemove(foreignAssemblyName, out var resourcePriPath);
+		if (resourcePriPath != null)
 		{
 			await UnloadPriResourcesFromCoreResourceMapAsync(resourcePriPath);
 		}
-		else
-		{
-			resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
-			if (File.Exists(resourcePriPath))
-			{
-				await UnloadPriResourcesFromCoreResourceMapAsync(resourcePriPath);
-			}
-		}
 	}
 
-	public static void UnloadPriResourcesFromCoreResourceMap(string resourcePriPath)
+	private static void UnloadPriResourcesFromCoreResourceMap(string resourcePriPath)
 	{
 		FileInfo resourcePriFileInfo = new(resourcePriPath);
 		var getFileTask = Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName).AsTask();
@@ -187,7 +193,7 @@ internal static class ResourceExtensions
 		Windows.ApplicationModel.Resources.Core.ResourceManager.Current.UnloadPriFiles(new[] { file });
 	}
 
-	public static async Task UnloadPriResourcesFromCoreResourceMapAsync(string resourcePriPath)
+	private static async Task UnloadPriResourcesFromCoreResourceMapAsync(string resourcePriPath)
 	{
 		FileInfo resourcePriFileInfo = new(resourcePriPath);
 		var file = await Windows.Storage.StorageFile.GetFileFromPathAsync(resourcePriFileInfo.FullName);

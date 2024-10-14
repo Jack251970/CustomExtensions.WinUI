@@ -24,7 +24,7 @@ public static partial class ApplicationExtensionHost
         }
 
         _Current = new ApplicationExtensionHostSingleton<TApplication>(application);
-    }
+	}
 
     /// <summary>
     /// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
@@ -40,10 +40,10 @@ public static partial class ApplicationExtensionHost
             return null;
         }
 
-		var find = ResourceExtensions.WinResourceMaps.TryGetValue(assemblyName, out var map);
-		if (find)
+		var resourceMap = TryFindWinResourceMap(assemblyName);
+		if (resourceMap != null)
 		{
-			return map!.GetSubtree($"{assemblyName}/Resources");
+			return resourceMap;
 		}
 		else
 		{
@@ -66,10 +66,10 @@ public static partial class ApplicationExtensionHost
 			return null;
 		}
 
-		var find = Windows.ApplicationModel.Resources.Core.ResourceManager.Current.AllResourceMaps.TryGetValue(assemblyName, out var map);
-		if (find)
+		var resourceMap = TryFindCoreResourceMap(assemblyName);
+		if (resourceMap != null)
 		{
-			return map!.GetSubtree($"{assemblyName}/Resources");
+			return resourceMap;
 		}
 		else
 		{
@@ -92,15 +92,29 @@ public static partial class ApplicationExtensionHost
 			return null;
 		}
 
-		var find = Windows.ApplicationModel.Resources.Core.ResourceManager.Current.AllResourceMaps.TryGetValue(assemblyName, out var map);
-		if (find)
+		var resourceMap = TryFindCoreResourceMap(assemblyName);
+		if (resourceMap != null)
 		{
-			return map!.GetSubtree($"{assemblyName}/Resources");
+			return resourceMap;
 		}
 		else
 		{
 			await ResourceExtensions.LoadPriResourcesIntoCoreResourceMapAsync(assembly);
 			return await GetCoreResourceMapForAssemblyAsync(assembly);
 		}
+	}
+
+	private static Microsoft.Windows.ApplicationModel.Resources.ResourceMap? TryFindWinResourceMap(string assemblyName)
+	{
+		return ResourceExtensions.WinResourceMaps.TryGetValue(assemblyName, out var map) ?
+			map!.TryGetSubtree($"{assemblyName}/Resources") :
+			null;
+	}
+
+	private static Windows.ApplicationModel.Resources.Core.ResourceMap? TryFindCoreResourceMap(string assemblyName)
+	{
+		return Windows.ApplicationModel.Resources.Core.ResourceManager.Current.AllResourceMaps.TryGetValue(assemblyName, out var map) ?
+			map!.GetSubtree($"{assemblyName}/Resources") :
+			Windows.ApplicationModel.Resources.Core.ResourceManager.Current.MainResourceMap.GetSubtree($"{assemblyName}/Resources");
 	}
 }
