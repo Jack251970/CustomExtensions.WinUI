@@ -4,6 +4,9 @@ using Microsoft.UI.Xaml.Markup;
 
 namespace CustomExtensions.WinUI.Contracts;
 
+/// <summary>
+/// Interface for the application extension host.
+/// </summary>
 public interface IApplicationExtensionHost
 {
 	/// <summary>

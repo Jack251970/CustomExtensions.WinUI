@@ -23,6 +23,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>WinUI;plugin-loader;plugin;extension</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <!-- Other Settings -->
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<ImplicitUsings>enable</ImplicitUsings>

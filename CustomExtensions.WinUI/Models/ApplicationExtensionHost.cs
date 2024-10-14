@@ -2,12 +2,19 @@
 
 namespace CustomExtensions.WinUI.Models;
 
+/// <summary>
+/// Provides a host for application extensions.
+/// </summary>
 public static partial class ApplicationExtensionHost
 {
     internal static bool IsHotReloadEnabled => Environment.GetEnvironmentVariable("ENABLE_XAML_DIAGNOSTICS_SOURCE_INFO") == "1";
 
     private static IApplicationExtensionHost? _Current;
-    public static IApplicationExtensionHost Current => _Current ?? throw new InvalidOperationException("ApplicationExtensionHost is not initialized");
+
+	/// <summary>
+	/// Gets the current instance of the application extension host.
+	/// </summary>
+	public static IApplicationExtensionHost Current => _Current ?? throw new InvalidOperationException("ApplicationExtensionHost is not initialized");
 
 	/// <summary>
 	/// Initializes the application extension host with the specified application.

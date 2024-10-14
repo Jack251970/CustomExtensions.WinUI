@@ -5,10 +5,13 @@ using WinRT;
 
 namespace CustomExtensions.WinUI.Extensions;
 
+/// <summary>
+/// Provides helper methods for WinUI components in for application extensions.
+/// </summary>
 public static class WinUIExtensions
 {
 	/// <summary>
-	/// Initialize the component and try to infer the correct path to the Xaml file based on the `CallerFilePath` attribute.
+	/// Initialize the component and try to infer the correct path to the Xaml files.
 	/// </summary>
 	/// <typeparam name="T">The type of the component to load.</typeparam>
 	/// <param name="component">The component to load.</param>

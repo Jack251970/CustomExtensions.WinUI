@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace CustomExtensions.WinUI.Contracts;
 
+/// <summary>
+/// Interface for the extension assembly.
+/// </summary>
 public interface IExtensionAssembly : IDisposable
 {
 	/// <summary>
