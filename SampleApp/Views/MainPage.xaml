@@ -28,10 +28,14 @@
 
         <StackPanel Orientation="Vertical">
             <TextBlock
+                Margin="5"
                 HorizontalAlignment="Center"
                 FontSize="20"
                 Text="IExtension Content:" />
-            <ContentPresenter Content="{Binding SelectedItem.Instance.Content, ElementName=Nav, Mode=OneWay}" />
+            <ContentPresenter
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="{Binding SelectedItem.Instance.Content, ElementName=Nav, Mode=OneWay}" />
         </StackPanel>
     </NavigationView>
 </Page>
