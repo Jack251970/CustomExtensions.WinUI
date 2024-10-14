@@ -9,22 +9,22 @@ internal static class ResourceExtensions
 
 	#region Management
 
-	internal static ConcurrentDictionary<string, Microsoft.Windows.ApplicationModel.Resources.ResourceMap> WinResourceMaps = new();
+	internal static ConcurrentDictionary<string, Microsoft.Windows.ApplicationModel.Resources.ResourceManager> WinResourceManager = new();
 
 	#endregion
 
 	#region Load
 
-	public static void LoadPriResourcesIntoWinResourceMap(Assembly ForeignAssembly)
+	public static void LoadPriResourcesIntoWinResourceManager(Assembly ForeignAssembly)
 	{
 		var foreignAssemblyDir = Path.GetDirectoryName(ForeignAssembly.Location.AssertDefined()).AssertDefined();
 		var foreignAssemblyName = ForeignAssembly.GetName().Name.AssertDefined();
-		LoadPriResourcesIntoWinResourceMap(foreignAssemblyDir, foreignAssemblyName);
+		LoadPriResourcesIntoWinResourceManager(foreignAssemblyDir, foreignAssemblyName);
 	}
 
-	public static void LoadPriResourcesIntoWinResourceMap(string foreignAssemblyDir, string foreignAssemblyName)
+	public static void LoadPriResourcesIntoWinResourceManager(string foreignAssemblyDir, string foreignAssemblyName)
 	{
-		if (WinResourceMaps.ContainsKey(foreignAssemblyName))
+		if (WinResourceManager.ContainsKey(foreignAssemblyName))
 		{
 			return;
 		}
@@ -32,33 +32,33 @@ internal static class ResourceExtensions
 		var resourcePriPath = Path.Combine(foreignAssemblyDir, "resources.pri");
 		if (File.Exists(resourcePriPath))
 		{
-			WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath).MainResourceMap);
+			WinResourceManager.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath));
 			return;
 		}
 
 		resourcePriPath = Path.Combine(foreignAssemblyDir, $"{foreignAssemblyName}.pri");
 		if (File.Exists(resourcePriPath))
 		{
-			WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath).MainResourceMap);
+			WinResourceManager.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager(resourcePriPath));
 			return;
 		}
 
-		WinResourceMaps.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager().MainResourceMap);
+		WinResourceManager.TryAdd(foreignAssemblyName, new Microsoft.Windows.ApplicationModel.Resources.ResourceManager());
 	}
 
 	#endregion
 
 	#region Unload
 
-	public static void UnloadPriResourcesFromWinResourceMap(Assembly ForeignAssembly)
+	public static void UnloadPriResourcesFromWinResourceManager(Assembly ForeignAssembly)
 	{
 		var foreignAssemblyName = ForeignAssembly.GetName().Name.AssertDefined();
-		UnloadPriResourcesFromWinResourceMap(foreignAssemblyName);
+		UnloadPriResourcesFromWinResourceManager(foreignAssemblyName);
 	}
 
-	public static void UnloadPriResourcesFromWinResourceMap(string foreignAssemblyName)
+	public static void UnloadPriResourcesFromWinResourceManager(string foreignAssemblyName)
 	{
-		WinResourceMaps.TryRemove(foreignAssemblyName, out _);
+		WinResourceManager.TryRemove(foreignAssemblyName, out _);
 	}
 
 	#endregion

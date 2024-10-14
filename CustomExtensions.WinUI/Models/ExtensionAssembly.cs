@@ -36,7 +36,7 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 
 		if (loadPriResourcesIntoWinResourceMap)
 		{
-			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
+			ResourceExtensions.LoadPriResourcesIntoWinResourceManager(ForeignAssemblyDir, ForeignAssemblyName);
 		}
 
 		if (loadPriResourcesIntoCoreResourceMap)
@@ -56,7 +56,7 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 
 		if (loadPriResourcesIntoWinResourceMap)
 		{
-			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
+			ResourceExtensions.LoadPriResourcesIntoWinResourceManager(ForeignAssemblyDir, ForeignAssemblyName);
 		}
 
 		if (loadPriResourcesIntoCoreResourceMap)
@@ -142,7 +142,7 @@ internal partial class ExtensionAssembly : IExtensionAssembly
 		{
 			if (disposing)
 			{
-				ResourceExtensions.UnloadPriResourcesFromWinResourceMap(ForeignAssemblyName);
+				ResourceExtensions.UnloadPriResourcesFromWinResourceManager(ForeignAssemblyName);
 				ResourceExtensions.UnloadPriResourcesFromCoreResourceMap(ForeignAssemblyDir, ForeignAssemblyName);
 				Disposables?.Dispose();
 			}

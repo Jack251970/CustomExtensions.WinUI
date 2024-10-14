@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Microsoft.UI.Xaml;
 
 namespace CustomExtensions.WinUI.Models;
 
@@ -12,12 +11,13 @@ public static partial class ApplicationExtensionHost
 
 	/// <summary>
 	/// Initializes the application extension host with the specified application.
+	/// <see cref="Microsoft.UI.Xaml.Application"/>
 	/// </summary>
 	/// <typeparam name="TApplication">The type of the application.</typeparam>
 	/// <param name="application">The application to initialize the application extension host with.</param>
 	/// <exception cref="InvalidOperationException">Cannot initialize application twice.</exception>
-	public static void Initialize<TApplication>(TApplication application) where TApplication : Application
-    {
+	public static void Initialize<TApplication>(TApplication application) where TApplication : Microsoft.UI.Xaml.Application
+	{
         if (_Current != null)
         {
             throw new InvalidOperationException("Cannot initialize application twice");
@@ -26,12 +26,40 @@ public static partial class ApplicationExtensionHost
         _Current = new ApplicationExtensionHostSingleton<TApplication>(application);
 	}
 
-    /// <summary>
-    /// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
-    /// </summary>
-    /// <param name="assembly">Assembly for which to load the default resource map</param>
-    /// <returns>A ResourceMap if one is found, otherwise null</returns>
-    public static Microsoft.Windows.ApplicationModel.Resources.ResourceMap? GetWinResourceMapForAssembly(Assembly? assembly = null)
+	/// <summary>
+	/// Gets the default resource manager for the specified assembly, or the caller's executing assembly if not provided.
+	/// <see cref="Microsoft.Windows.ApplicationModel.Resources.ResourceManager"/>
+	/// </summary>
+	/// <param name="assembly">Assembly for which to load the default resource manager</param>
+	/// <returns>A ResourceManager if one is found, otherwise null</returns>
+	public static Microsoft.Windows.ApplicationModel.Resources.ResourceManager? GetWinResourceManagerForAssembly(Assembly? assembly = null)
+	{
+		assembly ??= Assembly.GetCallingAssembly();
+		var assemblyName = assembly.GetName().Name;
+		if (assemblyName == null)
+		{
+			return null;
+		}
+
+		var resourceMap = TryFindWinResourceManager(assemblyName);
+		if (resourceMap != null)
+		{
+			return resourceMap;
+		}
+		else
+		{
+			ResourceExtensions.LoadPriResourcesIntoWinResourceManager(assembly);
+			return TryFindWinResourceManager(assemblyName);
+		}
+	}
+
+	/// <summary>
+	/// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
+	/// <see cref="Microsoft.Windows.ApplicationModel.Resources.ResourceMap"/>
+	/// </summary>
+	/// <param name="assembly">Assembly for which to load the default resource map</param>
+	/// <returns>A ResourceMap if one is found, otherwise null</returns>
+	public static Microsoft.Windows.ApplicationModel.Resources.ResourceMap? GetWinResourceMapForAssembly(Assembly? assembly = null)
     {
         assembly ??= Assembly.GetCallingAssembly();
         var assemblyName = assembly.GetName().Name;
@@ -47,13 +75,14 @@ public static partial class ApplicationExtensionHost
 		}
 		else
 		{
-			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(assembly);
+			ResourceExtensions.LoadPriResourcesIntoWinResourceManager(assembly);
 			return TryFindWinResourceMap(assemblyName);
 		}
 	}
 
 	/// <summary>
 	/// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
+	/// <see cref="Windows.ApplicationModel.Resources.Core.ResourceMap"/>
 	/// </summary>
 	/// <param name="assembly">Assembly for which to load the default resource map</param>
 	/// <returns>A ResourceMap if one is found, otherwise null</returns>
@@ -80,6 +109,7 @@ public static partial class ApplicationExtensionHost
 
 	/// <summary>
 	/// Gets the default resource map for the specified assembly, or the caller's executing assembly if not provided.
+	/// <see cref="Windows.ApplicationModel.Resources.Core.ResourceMap"/>
 	/// </summary>
 	/// <param name="assembly">Assembly for which to load the default resource map</param>
 	/// <returns>A ResourceMap if one is found, otherwise null</returns>
@@ -104,11 +134,14 @@ public static partial class ApplicationExtensionHost
 		}
 	}
 
+	private static Microsoft.Windows.ApplicationModel.Resources.ResourceManager? TryFindWinResourceManager(string assemblyName)
+	{
+		return ResourceExtensions.WinResourceManager.TryGetValue(assemblyName, out var manager) ? manager : null;
+	}
+
 	private static Microsoft.Windows.ApplicationModel.Resources.ResourceMap? TryFindWinResourceMap(string assemblyName)
 	{
-		return ResourceExtensions.WinResourceMaps.TryGetValue(assemblyName, out var map) ?
-			map!.TryGetSubtree($"{assemblyName}/Resources") :
-			null;
+		return TryFindWinResourceManager(assemblyName)?.MainResourceMap.TryGetSubtree($"{assemblyName}/Resources");
 	}
 
 	private static Windows.ApplicationModel.Resources.Core.ResourceMap? TryFindCoreResourceMap(string assemblyName)
