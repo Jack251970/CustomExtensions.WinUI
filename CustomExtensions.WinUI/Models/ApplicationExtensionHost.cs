@@ -48,7 +48,7 @@ public static partial class ApplicationExtensionHost
 		else
 		{
 			ResourceExtensions.LoadPriResourcesIntoWinResourceMap(assembly);
-			return GetWinResourceMapForAssembly(assembly);
+			return TryFindWinResourceMap(assemblyName);
 		}
 	}
 
@@ -74,7 +74,7 @@ public static partial class ApplicationExtensionHost
 		else
 		{
 			ResourceExtensions.LoadPriResourcesIntoCoreResourceMap(assembly);
-			return GetCoreResourceMapForAssembly(assembly);
+			return TryFindCoreResourceMap(assemblyName);
 		}
 	}
 
@@ -100,7 +100,7 @@ public static partial class ApplicationExtensionHost
 		else
 		{
 			await ResourceExtensions.LoadPriResourcesIntoCoreResourceMapAsync(assembly);
-			return await GetCoreResourceMapForAssemblyAsync(assembly);
+			return TryFindCoreResourceMap(assemblyName);
 		}
 	}
 
