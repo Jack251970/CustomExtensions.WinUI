@@ -21,7 +21,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/Jack251970/CustomExtensions.WinUI</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>WinUI</PackageTags>
+    <PackageTags>WinUI;plugin-loader;plugin;extension</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <!-- Other Settings -->
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
