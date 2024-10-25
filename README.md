@@ -85,6 +85,8 @@ public sealed partial class SamplePage : Page
 }
 ```
 
+> Note: Loading xaml resources need to create a symbolic link, and you need to run application with the administrator privileges.
+
 ### 4. Load pri resources
 
 * Method 1: Use `Microsoft.Windows.ApplicationModel.ResourceMap` (Recommended)
